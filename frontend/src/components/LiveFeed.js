@@ -6,10 +6,13 @@ function LiveFeed() {
   const [connected, setConnected] = useState(false);
   const feedRef = useRef(null);
   const wsRef = useRef(null);
+  const retryRef = useRef(null);
+  const retryDelay = useRef(1000);
 
   useEffect(() => {
     connectWs();
     return () => {
+      if (retryRef.current) clearTimeout(retryRef.current);
       if (wsRef.current) wsRef.current.close();
     };
   }, []);
@@ -20,11 +23,22 @@ function LiveFeed() {
     }
   }, [items]);
 
+  function scheduleReconnect() {
+    if (retryRef.current) clearTimeout(retryRef.current);
+    retryRef.current = setTimeout(() => {
+      connectWs();
+      retryDelay.current = Math.min(retryDelay.current * 2, 30000);
+    }, retryDelay.current);
+  }
+
   function connectWs() {
     const ws = new WebSocket(getWebSocketUrl());
     wsRef.current = ws;
 
-    ws.onopen = () => setConnected(true);
+    ws.onopen = () => {
+      setConnected(true);
+      retryDelay.current = 1000;
+    };
 
     ws.onmessage = (event) => {
       try {
@@ -38,10 +52,12 @@ function LiveFeed() {
 
     ws.onclose = () => {
       setConnected(false);
+      scheduleReconnect();
     };
 
     ws.onerror = () => {
       setConnected(false);
+      ws.close();
     };
   }
 
