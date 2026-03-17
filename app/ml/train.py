@@ -3,7 +3,6 @@ import os
 import sys
 
 import joblib
-import numpy as np
 import pandas as pd
 from sklearn.ensemble import IsolationForest
 from sklearn.metrics import (
