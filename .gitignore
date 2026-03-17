@@ -37,6 +37,7 @@ ENV/
 models/*.pkl
 models/*.joblib
 !models/.gitkeep
+!models/feature_columns.json
 
 data/*.csv
 !data/.gitkeep

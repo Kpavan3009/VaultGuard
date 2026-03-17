@@ -1,0 +1,1 @@
+["amount", "amount_zscore", "amount_to_avg_ratio", "hour_of_day", "day_of_week", "is_weekend", "time_since_last_txn", "geo_distance_from_last", "merchant_category_encoded", "is_new_merchant", "is_round_amount", "is_high_risk_category", "txn_count_1h", "txn_count_24h", "amount_sum_1h", "amount_sum_24h", "velocity_1h"]
