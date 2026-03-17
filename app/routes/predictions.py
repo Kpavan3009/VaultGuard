@@ -8,18 +8,26 @@ from app.services.transaction_service import TransactionService
 
 router = APIRouter(prefix="/predictions", tags=["predictions"])
 
-fraud_service = FraudDetectionService()
+_fraud_service = None
+
+
+def get_fraud_service():
+    global _fraud_service
+    if _fraud_service is None:
+        _fraud_service = FraudDetectionService()
+    return _fraud_service
 
 
 @router.post("/analyze", response_model=FraudPredictionResponse)
 def analyze_transaction(txn: TransactionCreate, db: Session = Depends(get_db)):
+    svc = get_fraud_service()
     txn_svc = TransactionService(db)
     user_history = txn_svc.get_user_history(txn.user_id)
 
     txn_dict = txn.model_dump()
     txn_dict["timestamp"] = txn.timestamp.isoformat()
 
-    result = fraud_service.predict(txn_dict, user_history)
+    result = svc.predict(txn_dict, user_history)
 
     txn_dict["fraud_probability"] = result["fraud_probability"]
     txn_dict["risk_tier"] = result["risk_tier"]
@@ -50,6 +58,7 @@ def analyze_transaction(txn: TransactionCreate, db: Session = Depends(get_db)):
 
 @router.post("/batch")
 def batch_analyze(transactions: list[TransactionCreate], db: Session = Depends(get_db)):
+    svc = get_fraud_service()
     results = []
     txn_svc = TransactionService(db)
 
@@ -57,7 +66,7 @@ def batch_analyze(transactions: list[TransactionCreate], db: Session = Depends(g
         user_history = txn_svc.get_user_history(txn.user_id)
         txn_dict = txn.model_dump()
         txn_dict["timestamp"] = txn.timestamp.isoformat()
-        result = fraud_service.predict(txn_dict, user_history)
+        result = svc.predict(txn_dict, user_history)
         results.append({
             "transaction_id": txn.transaction_id,
             "fraud_probability": result["fraud_probability"],
