@@ -83,7 +83,7 @@ def test_compute_features_has_amount_zscore():
     result_df, _ = compute_features(df)
     assert "amount_zscore" in result_df.columns
     zscores = result_df["amount_zscore"].values
-    assert zscores[0] < zscores[1]
+    assert float(zscores[0]) < float(zscores[1]) - 1e-9
 
 
 def test_compute_features_time_features():

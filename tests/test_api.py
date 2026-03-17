@@ -41,12 +41,23 @@ def test_create_duplicate_returns_409(client, sample_transaction):
     assert response.status_code == 409
 
 
-def test_transaction_fields_persisted(client, sample_transaction):
-    client.post("/api/v1/transactions/", json=sample_transaction)
-    response = client.get("/api/v1/transactions/txn_test_001")
+def test_transaction_fields_persisted(client):
+    txn = {
+        "transaction_id": "txn_persist_001",
+        "user_id": "user_42",
+        "amount": 150.00,
+        "merchant_id": "merch_001",
+        "merchant_category": "grocery",
+        "location_lat": 40.7128,
+        "location_lon": -74.0060,
+        "timestamp": "2024-06-15T14:30:00",
+    }
+    client.post("/api/v1/transactions/", json=txn)
+    response = client.get("/api/v1/transactions/txn_persist_001")
     data = response.json()
     assert data["merchant_category"] == "grocery"
     assert data["status"] == "pending"
+    assert abs(data["amount"] - 150.00) < 0.01
 
 
 def test_list_transactions_pagination(client):
