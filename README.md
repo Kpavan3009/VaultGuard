@@ -120,6 +120,3 @@ Every prediction also comes with SHAP values showing the top 3 features that dro
 pytest tests/ -v
 ```
 
-## Screenshots
-
-_TODO: add screenshots_
