@@ -1,5 +1,9 @@
 import React from "react";
 import { Routes, Route, NavLink } from "react-router-dom";
+import FraudDashboard from "./components/FraudDashboard";
+import TransactionTable from "./components/TransactionTable";
+import TransactionDetail from "./components/TransactionDetail";
+import LiveFeed from "./components/LiveFeed";
 
 function App() {
   return (
@@ -12,10 +16,10 @@ function App() {
       </nav>
       <main className="main-content">
         <Routes>
-          <Route path="/" element={<div className="page-placeholder">Dashboard</div>} />
-          <Route path="/transactions" element={<div className="page-placeholder">Transactions</div>} />
-          <Route path="/transactions/:id" element={<div className="page-placeholder">Transaction Detail</div>} />
-          <Route path="/live" element={<div className="page-placeholder">Live Feed</div>} />
+          <Route path="/" element={<FraudDashboard />} />
+          <Route path="/transactions" element={<TransactionTable />} />
+          <Route path="/transactions/:id" element={<TransactionDetail />} />
+          <Route path="/live" element={<LiveFeed />} />
         </Routes>
       </main>
     </div>
